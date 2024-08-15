@@ -22,6 +22,30 @@ sys_getpid(void)
 }
 
 uint64
+sys_getppid(void)
+{
+  return myproc()->parent->pid;
+}
+
+uint64
+sys_getancestor(void)
+{
+  int n;
+  argint(0, &n);
+
+  int count = 0;
+  struct proc *current = myproc();
+  while (current != 0){
+    if (count == n) {
+      return current->pid;
+    }
+    count++;
+    current = current->parent;
+  }
+  return -1;
+}
+
+uint64
 sys_fork(void)
 {
   return fork();
