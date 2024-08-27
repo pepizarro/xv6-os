@@ -16,7 +16,6 @@ El código es similar al que se utilizaría para recorrer una linked list, donde
 La parte de los argumentos se me hizo interesante ya que se deben utilizar otras funciones como `argint` para obtener los parámetro, y no funciona como lo haría una función común de C.
 
 ### yosoytupadre
-Por último la implementación de este programa fue lo más fácil### yosoytupadre
-Por último la implementación de este programa fue lo más fácil, ya que solo se debe declarar en el Makefile, y el resto funciona como C normal. Lo que fue un poxo extraño fue lograr imprimir en pantalla. Pero repliqué lo que hacían otros programas como `cat`.
+Por último la implementación de este programa fue lo más fácil, ya que solo se debe declarar el programa en el Makefile, y el resto funciona como C normal. Lo que fue un poco extraño fue lograr imprimir en pantalla. Pero repliqué lo que hacían otros programas como `cat`.
 
 ![plot](./t1.png)
