@@ -2,7 +2,7 @@
 # Tarea 1
 
 ### getppid()
-Para la creación de esta llamada al sistema se ha realizado una implementación idéntica a la de getpid(), con la diferencia de que se ha cambiado el valor de retorno a `task->parent->pid` en lugar de `task->pid`. Haciendo referencia al proceso padre del proceso actual.
+Para la creación de esta llamada al sistema se ha realizado una implementación idéntica a la de getpid(), con la diferencia de que se ha cambiado el valor de retorno a `myproc()->parent->pid` en lugar de `myproc()->pid`. Haciendo referencia al proceso padre del proceso actual.
 
 Lo más complejo de esta implementación fue encontrar en que partes del código se deben declarar las llamadas a sistema, ya que se deben declarar tanto en el directorio `kernel` como  se deben declarar tanto en el directorio `kernel` como  se deben declarar tanto en el directorio `kernel` como en el `user`.
 
