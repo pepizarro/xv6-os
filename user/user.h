@@ -21,6 +21,8 @@ int dup(int);
 int getpid(void);
 int getppid(void);
 int getancestor(int);
+int getpriority(void);
+int getboost(void);
 char* sbrk(int);
 int sleep(int);
 int uptime(void);

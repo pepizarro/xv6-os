@@ -114,14 +114,46 @@ allocproc(void)
   for(p = proc; p < &proc[NPROC]; p++) {
     acquire(&p->lock);
     if(p->state == UNUSED) {
+      // guardar el proceso libre
       goto found;
+      
     } else {
       release(&p->lock);
     }
   }
+
+  // Si encontró un proceso libre, continuar a found
+  /*if (fp != 0){*/
+  /*  goto found;*/
+  /*}*/
+
   return 0;
 
 found:
+
+  p->priority = 0;
+  p->boost = 1;
+  
+  // Se encontró el proceso libre, ahora modificamos la prioridad del resto
+  struct proc *otherp;
+  for(otherp = proc; otherp < &proc[NPROC]; otherp++) {
+    if (otherp == p){
+      continue;
+    }
+    acquire(&otherp->lock);
+    if(otherp->state != UNUSED && otherp->state != ZOMBIE) {
+      if (otherp->priority == 9){
+        otherp->boost = -1;
+      } else if (otherp->priority == 0){
+        otherp->boost = 1;
+      }
+      otherp->priority += otherp->boost;
+    }
+    release(&otherp->lock);
+  }
+
+
+  // Aquí ingresa el nuevo proceso
   p->pid = allocpid();
   p->state = USED;
 
@@ -250,6 +282,9 @@ userinit(void)
   p->cwd = namei("/");
 
   p->state = RUNNABLE;
+
+  p->priority = 0;
+  p->boost = 1;
 
   release(&p->lock);
 }
@@ -454,16 +489,25 @@ scheduler(void)
     // processes are waiting.
     intr_on();
 
+    struct proc *lproc = 0;
+    int lowerp = 0;
     int found = 0;
+
     for(p = proc; p < &proc[NPROC]; p++) {
       acquire(&p->lock);
       if(p->state == RUNNABLE) {
         // Switch to chosen process.  It is the process's job
         // to release its lock and then reacquire it
         // before jumping back to us.
-        p->state = RUNNING;
-        c->proc = p;
-        swtch(&c->context, &p->context);
+        /*p->state = RUNNING;*/
+        /*c->proc = p;*/
+        /*swtch(&c->context, &p->context);*/
+
+        /*printf("<--- checking process with pid: %d - prio: %d, lower priority: %d \n", p->pid, p->priority ,lowerp) ;*/
+        if (p->priority < lowerp || lproc == 0){
+          lowerp = p->priority;
+          lproc = p;
+        }
 
         // Process is done running for now.
         // It should have changed its p->state before coming back.
@@ -472,11 +516,23 @@ scheduler(void)
       }
       release(&p->lock);
     }
-    if(found == 0) {
-      // nothing to run; stop running on this core until an interrupt.
+
+    if (lproc != 0){
+      acquire(&lproc->lock);
+
+      lproc->state = RUNNING;
+      c->proc = lproc;
+      swtch(&c->context, &lproc->context);
+      c->proc = 0;
+      release(&lproc->lock);
+    } else {
+    }
+
+    if (found == 0){
       intr_on();
       asm volatile("wfi");
     }
+
   }
 }
 

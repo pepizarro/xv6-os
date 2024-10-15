@@ -46,6 +46,19 @@ sys_getancestor(void)
 }
 
 uint64
+sys_getpriority(void)
+{
+  return myproc()->priority;
+}
+
+uint64
+sys_getboost(void)
+{
+  return myproc()->boost;
+}
+
+
+uint64
 sys_fork(void)
 {
   return fork();
