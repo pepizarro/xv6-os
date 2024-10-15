@@ -131,8 +131,6 @@ allocproc(void)
 
 found:
 
-  p->priority = 0;
-  p->boost = 1;
   
   // Se encontró el proceso libre, ahora modificamos la prioridad del resto
   struct proc *otherp;
@@ -156,6 +154,8 @@ found:
   // Aquí ingresa el nuevo proceso
   p->pid = allocpid();
   p->state = USED;
+  p->priority = 0;
+  p->boost = 1;
 
   // Allocate a trapframe page.
   if((p->trapframe = (struct trapframe *)kalloc()) == 0){
@@ -283,8 +283,8 @@ userinit(void)
 
   p->state = RUNNABLE;
 
-  p->priority = 0;
-  p->boost = 1;
+  /*p->priority = 0;*/
+  /*p->boost = 1;*/
 
   release(&p->lock);
 }
@@ -492,40 +492,33 @@ scheduler(void)
     struct proc *lproc = 0;
     int lowerp = 0;
     int found = 0;
+    
+    int areProcesses = 0;
 
     for(p = proc; p < &proc[NPROC]; p++) {
       acquire(&p->lock);
       if(p->state == RUNNABLE) {
-        // Switch to chosen process.  It is the process's job
-        // to release its lock and then reacquire it
-        // before jumping back to us.
-        /*p->state = RUNNING;*/
-        /*c->proc = p;*/
-        /*swtch(&c->context, &p->context);*/
 
-        /*printf("<--- checking process with pid: %d - prio: %d, lower priority: %d \n", p->pid, p->priority ,lowerp) ;*/
-        if (p->priority < lowerp || lproc == 0){
+        if (p->priority < lowerp || areProcesses == 0){
+
           lowerp = p->priority;
           lproc = p;
+          areProcesses = 1;
         }
-
-        // Process is done running for now.
-        // It should have changed its p->state before coming back.
-        c->proc = 0;
-        found = 1;
       }
       release(&p->lock);
     }
 
     if (lproc != 0){
       acquire(&lproc->lock);
-
-      lproc->state = RUNNING;
-      c->proc = lproc;
-      swtch(&c->context, &lproc->context);
-      c->proc = 0;
+      if (lproc->state == RUNNABLE){
+        lproc->state = RUNNING;
+        c->proc = lproc;
+        swtch(&c->context, &lproc->context);
+        c->proc = 0;
+        found = 1;
+      }
       release(&lproc->lock);
-    } else {
     }
 
     if (found == 0){

@@ -10,16 +10,20 @@ main(int argc, char *argv[])
   write(1, message, sizeof(message));
   fprintf(2, "started parent process, pid: %d, priority: %d, boost: %d\n", getpid(), getpriority(), getboost());
 
-  int procs = 20;
+  int procs = 5;
 
   for (int i = 0; i < procs; i++) {
     /*fprintf(2, "+ creating child process number: %d\n", i);*/
     int pid = fork();
     if (pid == 0) {
-        printf("ejecutando proceso numero %d, pid: %d \n", i, getpid());
+        while(1) {
+            fprintf(2, "ejecutando proceso numero %d, pid: %d \n", i, getpid());
+            sleep(10);
+        }
+    } else {
+        /*fprintf(2, "parent process, pid: %d, priority: %d, boost: %d\n", getpid(), getpriority(), getboost());*/
         sleep(10);
     }
-    sleep(1);
     /*fprintf(2, "parent process, pid: %d, priority: %d, boost: %d\n", getpid(), getpriority(), getboost());*/
   }
   
