@@ -28,6 +28,18 @@ sys_getppid(void)
 }
 
 uint64
+sys_memprotect(void)
+{
+  return myproc()->parent->pid;
+}
+
+uint64
+sys_memunprotect(void)
+{
+  return myproc()->parent->pid;
+}
+
+uint64
 sys_getancestor(void)
 {
   int n;
