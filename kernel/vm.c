@@ -451,17 +451,51 @@ copyinstr(pagetable_t pagetable, char *dst, uint64 srcva, uint64 max)
 }
 
 int
-mprotect(void addr, int len)
+uvmprotect(pagetable_t pagetable, uint64 va, int len)
 {
-  
-    int pages_involved = len / PGSIZE;
-    
 
-    pte = walk(pagetable, va0, 0);
+    if(va >= MAXVA)
+      panic("uvmprotect");
+
+    pte_t *pte;
+    // redondear hacia arriba las páginas involucradas
+    int pages_involved = PGROUNDUP(len) / PGSIZE;
+
+    // iterar sobre las páginas involucradas
+    for(int i = 0; i < pages_involved; i++){
+        pte = walk(pagetable, va + i * PGSIZE, 0);
+        if(pte == 0)
+          return -1;
+        // desactivar el bit de escritura
+        *pte &= ~PTE_W;
+        // activar el bit de lectura
+        *pte |= PTE_R;
+    }
+
+    return 0;
 }
 
 int
-muprotect(void addr, int len)
+uvmunprotect(pagetable_t pagetable, uint64 va, int len)
 {
-  
+    
+    if(va >= MAXVA)
+      panic("uvmunprotect");
+
+    pte_t *pte;
+    // redondear hacia arriba las páginas involucradas
+    int pages_involved = PGROUNDUP(len) / PGSIZE;
+
+    // iterar sobre las páginas involucradas
+    for(int i = 0; i < pages_involved; i++){
+        pte = walk(pagetable, va + i * PGSIZE, 0);
+        if(pte == 0)
+          return -1;
+        // activar el bit de escritura
+        *pte |= PTE_W;
+        // activar el bit de lectura
+        *pte |= PTE_R;
+    }
+
+    return 0;
 }

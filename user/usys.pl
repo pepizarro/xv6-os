@@ -38,5 +38,5 @@ entry("sleep");
 entry("uptime");
 entry("getppid");
 entry("getancestor");
-entry("memprotect");
-entry("memunprotect");
+entry("mprotect");
+entry("munprotect");

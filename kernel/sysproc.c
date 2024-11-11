@@ -28,15 +28,44 @@ sys_getppid(void)
 }
 
 uint64
-sys_memprotect(void)
+sys_mprotect(void)
 {
-  return myproc()->parent->pid;
+
+  uint64 addr;
+  argaddr(0, &addr);
+
+  int len;
+  argint(1, &len);
+
+  pagetable_t pagetable;
+  pagetable = myproc()->pagetable;
+
+  if (uvmprotect(pagetable, addr, len) == -1){
+    return -1;
+  }
+
+  return 0;
 }
 
 uint64
-sys_memunprotect(void)
+sys_munprotect(void)
 {
-  return myproc()->parent->pid;
+  uint64 addr;
+  argaddr(0, &addr);
+
+  int len;
+  argint(1, &len);
+
+
+  pagetable_t pagetable;
+  pagetable = myproc()->pagetable;
+  
+
+  if (uvmunprotect(pagetable, addr, len) == -1){
+    return -1;
+  }
+
+  return 0;
 }
 
 uint64

@@ -174,9 +174,9 @@ int             copyout(pagetable_t, uint64, char *, uint64);
 int             copyin(pagetable_t, char *, uint64, uint64);
 int             copyinstr(pagetable_t, char *, uint64, uint64);
 
-// declaramos mprotect y muprotect
-int             mprotect(void addr, int len);
-int             muprotect(void addr, int len);
+// declaramos uvmprotect y uvmuprotect
+int             uvmprotect(pagetable_t, uint64, int);
+int             uvmunprotect(pagetable_t, uint64, int);
 
 // plic.c
 void            plicinit(void);
