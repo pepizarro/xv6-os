@@ -129,7 +129,7 @@ Para agregar el permiso inicial debemos modificar la llamada de sistema `chmod` 
 
 Así luce la nueva llamada `chmod`:
 
-![plot](./T4-10.png)
+![plot](./T4-11.png)
 
 Antes de cambiar el permiso, se verifica si es que el permiso actual es 5, si lo es, se retorna un error.
 
