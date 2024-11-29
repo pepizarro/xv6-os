@@ -93,6 +93,7 @@ extern uint64 sys_dup(void);
 extern uint64 sys_getpid(void);
 extern uint64 sys_getppid(void);
 extern uint64 sys_getancestor(void);
+extern uint64 sys_chmod(void);
 extern uint64 sys_sbrk(void);
 extern uint64 sys_sleep(void);
 extern uint64 sys_uptime(void);
@@ -120,6 +121,7 @@ static uint64 (*syscalls[])(void) = {
 [SYS_getpid]  sys_getpid,
 [SYS_getppid]  sys_getppid,
 [SYS_getancestor]  sys_getancestor,
+[SYS_chmod]  sys_chmod,
 [SYS_sbrk]    sys_sbrk,
 [SYS_sleep]   sys_sleep,
 [SYS_uptime]  sys_uptime,

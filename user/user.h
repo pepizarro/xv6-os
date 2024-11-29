@@ -21,6 +21,7 @@ int dup(int);
 int getpid(void);
 int getppid(void);
 int getancestor(int);
+int chmod(const char*, int);
 char* sbrk(int);
 int sleep(int);
 int uptime(void);
