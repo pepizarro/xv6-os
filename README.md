@@ -33,22 +33,28 @@ En `ilock`, que puede leer inodos del disco.
 
 #### 2. Operaciones
 
+En `kernel/sysfile.c`:
 Modificamos la funcion `open` para revisar los permisos, ya que aquí se utiliza un inodo para crear un archivo y se asignan los permisos según los permisos del inodo.
 
 ![plot](./T4-6.png)
 
+En `kernel/file.c`:
 Modificamos también las funciones `fileread` y `filewrite`, en los cuales se verifican los permisos para tanto la lectura como lectura.
 
-`fileread`
+`fileread`:
+
 ![plot](./T4-7.png)
 
-`filewrite`
+`filewrite`:
+
 ![plot](./T4-8.png)
 
 #### 3. chmod
 Creamos la llamada de sistema `chmod` la cual toma como argumentos el path del archivo (nombre) y el permiso que le queremos agregar como un `int`.
 en `kernel/sysfile.c`:
+
 ![plot](./T4-9.png)
+
 Primero se obtiene el argumento `path`, que contiene el nombre del archivo, junto a el int `perm`, que es el permiso a modificar. 
 Se realiza una verificación del permiso a modificar, y se comprueba que esté entre 0 y 3.
 
@@ -112,7 +118,9 @@ main(int argc, char *argv[])
 ```
 
 El cual entrega el siguiente output:
+
 ![plot](./T4-10.png)
+
 Por lo que los permisos están funcionando correctamente y no es posible escribir en un archivo que solo tiene permisos de lectura.
 
 ## Segunda Parte
@@ -120,6 +128,7 @@ Por lo que los permisos están funcionando correctamente y no es posible escribi
 Para agregar el permiso inicial debemos modificar la llamada de sistema `chmod` para agregarle la posibilidad de que exista el permiso 5 y que no permita cambiar el permiso si es que es inmutable.
 
 Así luce la nueva llamada `chmod`:
+
 ![plot](./T4-10.png)
 
 Antes de cambiar el permiso, se verifica si es que el permiso actual es 5, si lo es, se retorna un error.
@@ -135,7 +144,7 @@ if (!(f->ip->perm == 1 || f->ip->perm == 3 || f->ip->perm == 5)){
 
 También se modifica la llamada de sistema `open`, para que cuando se abra un archivo, sea leíble si es que tiene permiso 5:
 ```
-  f->readable = ((omode & O_RDONLY) || (omode & O_RDWR)) && ((ip->perm == 3) || (ip->perm == 1) || (ip->perm == 5));
+f->readable = ((omode & O_RDONLY) || (omode & O_RDWR)) && ((ip->perm == 3) || (ip->perm == 1) || (ip->perm == 5));
 
 ```
 #### 2. Pruebas
@@ -163,9 +172,14 @@ Aquí primero convertimos el archivo en inmutable, luego lo abrimos en modo `O_W
 Luego intentamos convertir el archivo en rw nuevamente. Esto también debería fallar ya que el archivo ya es inmutable.
 
 El nuevo `perm` nos arroja el siguiente output:
+
 ![plot](./T4-12.png)
+
+Por lo que todo funciona como se espera.
+
 ## Complicaciones
 en la estructura de dinodo hubo que agregar un padding, ya que al compilarlo se arrojaba este error:
+
 ![plot](./T4-bug.png)
 
 Esto es porque el tamaño de la estructura `dinode` era de 64 bits, y el tamaño de `BSIZE` es de 1024, por lo que:
