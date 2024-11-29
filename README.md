@@ -133,7 +133,13 @@ Así luce la nueva llamada `chmod`:
 
 Antes de cambiar el permiso, se verifica si es que el permiso actual es 5, si lo es, se retorna un error.
 
-Además se le agrega la siguiente condición a la función `filewrite` ya que si es inmutable no se puede escribir en el archivo.
+Además se le agrega la siguiente condición a la función `filewrite` ya que si es inmutable no se puede escribir en el archivo:
+
+```
+if(f->ip->perm == 5){
+    return -1;
+}
+```
 
 Y también se agrega la condición en `fileread`, para que el archivo pueda ser leído.
 ```
